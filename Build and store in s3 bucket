@@ -1,0 +1,20 @@
+pipeline{
+    agent any
+    stages{
+        stage('SCM'){
+            steps{
+                git 'https://github.com/digupawar/vprofile-repo.git'
+            }
+        }
+        stage('Code Build'){
+            steps{
+                sh 'mvn clean install -DskipTests'
+            }
+        }
+        stage('Upload to s3'){
+            steps{
+                s3Upload consoleLogLevel: 'INFO', dontSetBuildResultOnFailure: false, dontWaitForConcurrentBuildCompletion: false, entries: [[bucket: 'digvijay03', excludedFile: '', flatten: false, gzipFiles: false, keepForever: false, managedArtifacts: false, noUploadOnFailure: false, selectedRegion: 'us-east-1', showDirectlyInBrowser: false, sourceFile: '**/*.war', storageClass: 'STANDARD', uploadFromSlave: false, useServerSideEncryption: false]], pluginFailureResultConstraint: 'FAILURE', profileName: 'Artifacts_s3', userMetadata: []
+            }
+        }
+    }
+}
