@@ -1,0 +1,14 @@
+pipeline{
+    agent any
+    parameters {
+        gitParameter branchFilter: 'origin.*/(.*)', defaultValue: 'master', name: 'BRANCH', type: 'PT_BRANCH'
+    }
+    stages{
+        stage('SCM'){
+            steps{
+                git branch: "${params.BRANCH}", credentialsId: 'github', url: 'https://github.com/digupawar/vprofile-repo.git'
+            }
+        }
+        
+    }
+}
