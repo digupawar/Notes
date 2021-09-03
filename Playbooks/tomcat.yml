@@ -1,0 +1,19 @@
+---
+- hosts: webservers
+  become: yes
+  tasks:
+      - name: Taking backup of war file
+        copy:
+            src: /opt/tomcat/apache-tomcat-9.0.52/webapps/vprofile-v1.war
+            dest: /opt/tomcat/apache-tomcat-9.0.52/backup/
+            remote_src: yes
+
+      - name: Deleting war file from webapp
+        file:
+            path: /opt/tomcat/apache-tomcat-9.0.52/webapps/vprofile-v1.war
+            state: absent
+
+      - name: Deploy to tomcat server
+        copy:
+            src: /var/lib/jenkins/workspace/pipeline-1/target/vprofile-v1.war
+            dest: /opt/tomcat/apache-tomcat-9.0.52/webapps/
