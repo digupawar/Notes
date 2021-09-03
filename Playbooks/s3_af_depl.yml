@@ -1,0 +1,8 @@
+---
+- hosts: webservers
+  become: yes
+  tasks:
+      - name: Download artifacts from s3 and deploy to Tomcat
+        get_url:
+            url: https://digvijay03.s3.amazonaws.com/target/vprofile-v1.war
+            dest: /opt/tomcat/apache-tomcat-9.0.52/webapps/
