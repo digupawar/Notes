@@ -1,0 +1,22 @@
+pipeline{
+    agent any
+/*    tools{
+        maven 'maven3'
+    }
+*/    
+    stages{
+        stage('SCM'){
+            steps{
+                git credentialsId: 'github',
+                url: 'https://github.com/digupawar/myapp-ansible-1'
+            }
+        }
+        stage('Deploy'){
+            steps{
+                ansiblePlaybook credentialsId: 'Private-key', installation: 'ansible', inventory: 'dev.inv', playbook: 'apache.yml'
+            }
+        }
+    }
+}
+        
+        
