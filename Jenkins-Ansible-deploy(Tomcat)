@@ -1,0 +1,26 @@
+pipeline{
+    agent any
+/*    tools{
+        maven 'maven3'
+    }
+*/    
+    stages{
+        stage('SCM'){
+            steps{
+                git credentialsId: 'github',
+                url: 'https://github.com/digupawar/vprofile-repo.git'
+            }
+        }
+        stage('BUILD'){
+            steps{
+                sh 'mvn clean install -DskipTests'
+            }
+        }
+        stage('ansible playbook to deploy'){
+            steps{
+                ansiblePlaybook credentialsId: 'Private-key', disableHostKeyChecking: true, installation: 'ansible', inventory: '/var/lib/jenkins/playbooks/dev.inv', playbook: '/var/lib/jenkins/playbooks/tomcat.yml'
+            }
+        }
+        
+    }
+    }
