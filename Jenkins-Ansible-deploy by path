@@ -1,0 +1,11 @@
+pipeline{
+    agent any
+    stages{
+        stage('ansible playbook to deploy'){
+            steps{
+                ansiblePlaybook credentialsId: 'Private-key', disableHostKeyChecking: true, installation: 'ansible', inventory: '/var/lib/jenkins/playbooks/dev.inv', playbook: '/var/lib/jenkins/playbooks/tomcat.yml'
+            }
+        }
+        
+    }
+}
