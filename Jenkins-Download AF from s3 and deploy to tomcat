@@ -1,0 +1,10 @@
+pipeline{
+    agent any
+    stages{
+        stage('Download AF from s3 and deploy to tomcat'){
+            steps{
+                ansiblePlaybook credentialsId: 'Private-key', disableHostKeyChecking: true, installation: 'ansible', inventory: '/var/lib/jenkins/playbooks/dev.inv', playbook: '/var/lib/jenkins/playbooks/s3_af_depl.yml'
+            }
+        }
+    }
+}
