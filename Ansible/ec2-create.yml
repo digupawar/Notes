@@ -1,0 +1,37 @@
+---
+- name: create new key pair and ec2 instance
+  hosts: localhost
+  #become: yes
+  tasks:
+       - name: create a new ec2 key pair, returns generated private key
+         ec2_key:
+            name: my_keypair
+            region: us-east-2
+         register: keyout
+
+       - debug:
+              var: keyout
+
+
+       - name: save private key content
+         copy:
+              content: "{{keyout.key.private_key}}"
+              dest: ./my_keypair.pem
+         when: keyout.changed
+
+       - name: create ec2 instance
+         ec2:
+           key_name: my_keypair
+           instance_type: t2.micro
+           image: ami-077e31c4939f6a2f3
+           wait: yes
+           instance_tags:
+                Name: my-web01
+                project: vprofile
+           exact_count: 1
+           count_tag:
+                Name: my-web01
+                project: vprofile
+           region: us-east-2
+                #vpc_subnet_id: subnet-29e63245
+                #assign_public_ip: yes
