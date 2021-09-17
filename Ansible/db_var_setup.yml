@@ -1,0 +1,31 @@
+- name: setup dbserver
+  hosts: dbserver
+  become: yes
+  tasks:
+      - name: Installing mariadb-server
+        yum:
+          name: mariadb-server
+          state: present
+
+      - name: Install Mysql-python
+        yum:
+          name: MySQL-python
+          state: present
+
+      - name: Start mariadb-server
+        service:
+          name: mariadb
+          state: started
+          enabled: yes
+
+      - name: Create a new database with name 'Devops'
+        mysql_db:
+          name: "{{dbname}}"
+          state: present
+
+      - name: Create database
+        mysql_user:
+          name: "{{dbuser}}"
+          password: "{{dbpass}}"
+          priv: '*.*:ALL'
+          state: present
