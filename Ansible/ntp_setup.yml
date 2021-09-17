@@ -1,0 +1,41 @@
+---
+- name: Setup NTP service on all machine
+  hosts: all
+  become: yes
+  tasks:
+      - name: Install NTP
+        yum:
+           name: "{{item}}"
+           state: present
+        when: ansible_os_family == "RedHat"
+        loop:
+           - wget
+           - httpd
+           - git
+           - unzip
+           - tree
+
+        notify:
+               - Restart ntp service
+
+      - user:
+             name: "{{item}}"
+        loop:
+             - Digvijay
+             - Pawar
+             - Digu
+
+      - name: start and enable NTP service
+        service:
+             name: ntpd
+             state: started
+             enabled: yes
+        when: ansible_os_family == "RedHat"
+
+  handlers:
+      - name: Restart ntp service
+        service:
+             name: ntpd
+             state: restarted
+             enabled: yes
+        when: ansible_os_family == "RedHat"
