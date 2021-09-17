@@ -1,0 +1,18 @@
+web01 ansible_host=172.31.13.39
+web02 ansible_host=172.31.3.151
+db01 ansible_host=172.31.12.219
+
+[webserver]
+web01
+web02
+
+[dbserver]
+db01
+
+[panther_mum:children]
+webserver
+dbserver
+
+[panther_mum:vars]
+ansible_user=ec2-user
+ansible_ssh_private_key_file=Stack-key.pem
