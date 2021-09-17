@@ -1,0 +1,41 @@
+- name: setup dbserver
+  hosts: dbserver
+  become: yes
+  gather_facts: False
+  tasks:
+      - name: Installing mariadb-server
+        yum:
+          name: mariadb-server
+          state: present
+
+      - name: Install Mysql-python
+        yum:
+          name: MySQL-python
+          state: present
+
+      - name: Start mariadb-server
+        service:
+          name: mariadb
+          state: started
+          enabled: yes
+
+      - name: Create a new database
+        mysql_db:
+          name: Accounts1
+          state: present
+        register: db_createout
+
+      - name: Create database
+        mysql_user:
+          name: Digvijay
+          password: 12345
+          priv: '*.*:ALL'
+          state: present
+        register: db_userout
+
+
+      - debug:
+              var: db_createout
+
+      - debug:
+              var: db_userout
