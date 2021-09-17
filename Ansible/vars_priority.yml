@@ -1,0 +1,11 @@
+---
+- name: Playbook will create user to understand variable priority
+  hosts: all
+  vars:
+     USR: playuser
+     COMM: var from playbook
+  tasks:
+     - name: create user with comments
+       user:
+          name: "{{USR}}"
+          comment: "{{COMM}}"
