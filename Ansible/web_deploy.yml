@@ -1,0 +1,36 @@
+- name: setup webservice
+  hosts: webserver
+  become: yes
+  tasks:
+      - name: Installing httpd service
+        yum:
+          name: httpd
+          state: present
+      - name: Start httpd
+        service:
+          name: httpd
+          state: started
+          enabled: yes
+
+      - name: copy index.html file in clients
+        copy:
+          src: index.html
+          dest: /var/www/html/index.html
+          backup: yes
+          owner: root
+          group: root
+          mode: '644'
+
+- name: setup dbserver
+  hosts: dbserver
+  become: yes
+  tasks:
+      - name: Installing mariadb-server
+        yum:
+          name: mariadb-server
+          state: present
+      - name: Start mariadb-server
+        service:
+          name: mariadb
+          state: started
+          enabled: yes
