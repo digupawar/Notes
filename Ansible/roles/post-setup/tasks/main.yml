@@ -1,0 +1,31 @@
+---
+# tasks file for post-setup
+- name: Install NTP
+  yum:
+     name: "{{item}}"
+     state: present
+  when: ansible_os_family == "RedHat"
+  loop:
+     - wget
+     - httpd
+     - git
+     - unzip
+     - tree
+     - zip
+
+  notify:
+         - Restart ntp service
+
+- user:
+       name: "{{item}}"
+  loop:
+       - Digvijay
+       - Pawar
+       - Digu
+
+- name: start and enable NTP service
+  service:
+       name: ntpd
+       state: started
+       enabled: yes
+  when: ansible_os_family == "RedHat"
