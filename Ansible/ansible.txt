@@ -6,9 +6,9 @@ Ansible points:
 Inventory file
 vi inventory-stage
 ###################################################
-web01 ansible_host=172.31.13.39 ansible_user=ec2-user ansible_ssh_private_key_file=Stack-key.pem
-web02 ansible_host=172.31.3.151 ansible_user=ec2-user ansible_ssh_private_key_file=Stack-key.pem
-db01 ansible_host=172.31.12.219 ansible_user=ec2-user ansible_ssh_private_key_file=Stack-key.pem
+web01 ansible_host=172.31.13.0 ansible_user=ec2-user ansible_ssh_private_key_file=Stack-key.pem
+web02 ansible_host=172.31.3.1 ansible_user=ec2-user ansible_ssh_private_key_file=Stack-key.pem
+db01 ansible_host=172.31.12.9 ansible_user=ec2-user ansible_ssh_private_key_file=Stack-key.pem
 
 [webserver]
 web01
@@ -28,7 +28,7 @@ Using ad-hoc cmd to check ping-
 ansible -i inventory-stage -m ping web02
 
 SSH the webserver from main Control-manager
-ssh -i Stack-key.pem ec2-user@172.31.13.39
+ssh -i Stack-key.pem ec2-user@172.31.13.0
 
 Command to install httpd in webservers from control-machine (ad-hoc cmd)
 ansible -i inventory-stage -b -m yum -a "name=httpd state=present" webserver
