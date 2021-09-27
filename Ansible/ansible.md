@@ -1,0 +1,85 @@
+1. To access master node
+ssh -i ~/.ssh/id_rsa admin@api.digu.k8s.valaxy.net
+
+
+Ansible points:
+Inventory file
+vi inventory-stage
+###################################################
+web01 ansible_host=172.31.13.39 ansible_user=ec2-user ansible_ssh_private_key_file=Stack-key.pem
+web02 ansible_host=172.31.3.151 ansible_user=ec2-user ansible_ssh_private_key_file=Stack-key.pem
+db01 ansible_host=172.31.12.219 ansible_user=ec2-user ansible_ssh_private_key_file=Stack-key.pem
+
+[webserver]
+web01
+web02
+
+[dbserver]
+db01
+
+[panther_mum:children]
+webserver
+dbserver
+#####################################################
+
+#Stack-key---> pem key of web01,web02,db01
+
+Using ad-hoc cmd to check ping-
+ansible -i inventory-stage -m ping web02
+
+SSH the webserver from main Control-manager
+ssh -i Stack-key.pem ec2-user@172.31.13.39
+
+Command to install httpd in webservers from control-machine (ad-hoc cmd)
+ansible -i inventory-stage -b -m yum -a "name=httpd state=present" webserver
+OR
+ansible -i inventory-stage -m yum -a "name=httpd state=installed" webserver --become
+
+To start the httpd service:
+ansible -i inventory-stage -b -m service -a "name=httpd state=started" webserver
+
+Dry-run (Before executing Playbook, we can check for any errors)
+ansible-playbook -i inventory-stage web_deploy.yml -C
+
+Syntax check (Output should display as Playbook name then our syntax is correct)
+ansible-playbook -i inventory-stage web_deploy.yml --syntax-check
+
+mysql_db – Add or remove MySQL databases from a remote host
+These versions required
+MySQLdb (Python 2.x)
+PyMySQL (Python 2.7 and Python 3.X)
+
+But we can access our DB server via ssh and check for "MySQL-python" file then same need to be install.
+To search mysql-python file
+yum search python | grep mysql -i
+o/p- MySQL-python.x86_64 : An interface to MySQL
+
+So once complete above steps, we can easily create database through Playbook.
+
+Creating our own local ansible.cfg file
+vi ansible.cfg
+[defaults]
+host_key_checking = False
+inventory = ./inventory-stage
+timeout = 15
+fork = 5
+log_path = /var/log/ansible.log
+
+[privilage_escalation]
+become=True
+become_method=sudo
+become_user=root
+become_ask_pass=False
+
+Now we can execute ansible playbook without adding inventory file name in command
+ex- $ansible-playbook db_setup.yml
+before- $ansible-playbook -i inventory db_setup.yml
+
+Roles:
+1. create directory called- roles.
+2.cd roles
+3. $ansible-galaxy init post-setup    ### command to create role, post-setup-- role name.
+o/p: - Role post-setup was created successfully
+
+To replace something in vi editor-- 
+press esc--> :%s/^ previous word/what we wanted to replace/
