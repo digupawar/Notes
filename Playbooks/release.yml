@@ -1,0 +1,66 @@
+---
+- name: Release
+  hosts: windows
+  tasks:
+    - name: checking folder status
+      win_stat:
+        path: C:\BKP_folder\BKP17072021
+      register: filestatus
+
+    - debug:
+        var: filestatus
+ 
+    - name: staging release
+      win_file:
+        path: C:\BKP_folder\BKP17072021
+        state: directory
+      when: filestatus.stat.exists == false
+#      ignore_errors: yes 
+
+    - name: Creating bkp folders
+      win_file:
+        path: C:\Program Files\Apache Software Foundation\Tomcat 9.0\eKYCStaging
+        state: directory
+#      with_items:
+#        - eKYCStaging
+#        - eSignStaging
+#        - eKYCCA
+
+    - name: taking backup
+      win_copy:
+        src: C:\Program Files\Apache Software Foundation\Tomcat 9.0\webapps\{{item}}
+        dest: C:\BKP_folder\BKP17072021\eKYCStaging\
+        remote_src: yes
+      with_items:
+        - db.war
+        - def.war
+
+    - name: deleting warfiles
+      win_file:
+        path: C:\Program Files\Apache Software Foundation\Tomcat 9.0\webapps\{{item}}
+        state: absent
+      with_items:
+        - db.war
+        - def.war
+
+    - name: wait until all process completed
+      win_wait_for: 
+        path: C:\Program Files\Apache Software Foundation\Tomcat 9.0\webapps\{{item}}
+        state: absent
+      register: status
+      with_items:
+        - db
+        - def
+    - debug:
+        var: status
+
+    - name: Releasing latest folders
+      win_copy:
+        src: C:\Users\Administrator\Desktop\Release\{{item}}
+        dest: C:\Program Files\Apache Software Foundation\Tomcat 9.0\webapps\
+        remote_src: yes
+      with_items:
+        - db.war
+        - def.war
+    
+      
