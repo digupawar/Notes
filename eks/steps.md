@@ -45,4 +45,6 @@ kubectl create namespace two-tier-ns
 kubectl apply -f .
 Kubectl delete -f .
 
+**Delete Cluster**
+
 eksctl delete cluster --name my-cluster --region us-west-2
